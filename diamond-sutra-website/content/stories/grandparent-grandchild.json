@@ -1,0 +1,29 @@
+{
+  "id": "grandparent-grandchild",
+  "title": "The Question at the Table",
+  "role": "Grandparent–Grandchild Q&A",
+  "level": "beginner",
+  "teaser": "Your granddaughter, nine, asks you at dinner: \"Grandpa, are you going to die soon?\"",
+  "concept": "Meeting a hard, honest question without the fixed mark of 'the adult who must have a comforting answer.'",
+  "startNode": "start",
+  "nodes": {
+    "start": {
+      "text": "The table goes quiet. Her parents look at you, unsure whether to jump in. She's just looking at you, waiting, completely unafraid of the question she just asked.",
+      "reflection": "What are you actually protecting by softening your answer — her, or your own discomfort with the question?",
+      "choices": [
+        { "label": "\"Everybody dies eventually, sweetheart, but not for a long time.\"", "next": "ending_soften" },
+        { "label": "\"I don't know when. Nobody does. What made you ask?\"", "next": "ending_honest" }
+      ]
+    },
+    "ending_soften": {
+      "text": "She nods, seemingly satisfied, and the table moves on to other things. Later, you find yourself wishing you'd asked what was really behind the question — a book at school, a pet that died, a fear she was carrying alone.",
+      "ending": true,
+      "insight": "A comforting fixed answer can close a door as easily as it opens one. The sutra's teaching isn't 'always tell hard truths' — it's don't let your need for a certain, tidy answer replace actually meeting the person in front of you."
+    },
+    "ending_honest": {
+      "text": "\"Our hamster died on Tuesday and nobody told me until after,\" she says. \"I wanted to know things before they happen, not after.\" You spend the next twenty minutes not talking about death at all, but about being told the truth. She seems lighter by the end of it than she did at the start.",
+      "ending": true,
+      "insight": "The sutra never asks you to have the answer. It asks you not to dwell on needing one. Staying curious about her actual question, instead of supplying a fixed comforting one, was the whole gift."
+    }
+  }
+}

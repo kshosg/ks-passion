@@ -1,0 +1,20 @@
+[
+  {
+    "slug": "live-qa-beginner-oct-2026",
+    "title": "Live Q&A: Your First Month with the Diamond Sutra",
+    "date": "2026-10-05",
+    "level": "beginner",
+    "description": "Bring your questions from the first three podcast episodes and blog posts — open Q&A, beginner-friendly.",
+    "status": "upcoming",
+    "registerUrl": "/subscribe"
+  },
+  {
+    "slug": "applying-non-attachment-sept-2026",
+    "title": "Applying Non-Attachment at Work",
+    "date": "2026-09-10",
+    "level": "intermediate",
+    "description": "A recorded working session on using the sutra's teaching in performance reviews and hard conversations.",
+    "status": "past",
+    "recordingUrl": "/podcast/ep02-non-attachment-at-work"
+  }
+]

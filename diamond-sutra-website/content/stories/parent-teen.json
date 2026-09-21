@@ -1,0 +1,51 @@
+{
+  "id": "parent-teen",
+  "title": "The Group Chat",
+  "role": "Parent–Child (Teens) Q&A",
+  "level": "beginner",
+  "teaser": "Your fifteen-year-old comes home silent, phone face-down on the table for the first time ever, and won't say why.",
+  "concept": "Being present with your child without needing a fixed story of 'good parent who fixes everything.'",
+  "startNode": "start",
+  "nodes": {
+    "start": {
+      "text": "Dinner is nearly over before they finally speak: \"I got removed from the group chat. All of them. I don't even know what I did.\" Their voice is doing the thing where it's trying very hard not to shake.",
+      "reflection": "Do you need to fix this right now, or do you need to actually be here with them right now — and are those the same thing?",
+      "choices": [
+        { "label": "Jump straight to solving it: \"Do you want me to message their parents?\"", "next": "fix_it" },
+        { "label": "\"That sounds awful. I'm not going anywhere — tell me as much or as little as you want.\"", "next": "sit_with" },
+        { "label": "\"I got left out of things too, at your age. It never stopped hurting the same way.\"", "next": "secret_share", "secret": true }
+      ]
+    },
+    "fix_it": {
+      "text": "\"No — please don't. That would make it so much worse.\" They go quiet again, phone still face-down, and the conversation you were hoping to have closes back up.",
+      "reflection": "What were you actually trying to fix — the situation, or your own discomfort at watching them hurt and not being able to do anything?",
+      "choices": [
+        { "label": "Back off and just sit with them instead.", "next": "sit_with" },
+        { "label": "Leave it — check in again tomorrow.", "next": "ending_distant" }
+      ]
+    },
+    "sit_with": {
+      "text": "You don't ask any more questions. You just stay at the table. After a while, without looking up, they start talking — not the whole story, just pieces of it, at their own pace.",
+      "reflection": "Notice how little you had to do for this to open up. What does that tell you about what they actually needed tonight?",
+      "choices": [
+        { "label": "Let them lead the whole conversation, no matter how long it takes.", "next": "ending_open" },
+        { "label": "\"For what it's worth — this happened to me too, once.\"", "next": "secret_share" }
+      ]
+    },
+    "secret_share": {
+      "text": "You tell them, briefly, about being frozen out of your own friend group at fourteen — not the whole story, just enough. Something changes in how they're sitting. You're not the parent with the answer anymore. You're just someone who survived the same thing, sitting at the same table.",
+      "ending": true,
+      "insight": "The Diamond Sutra's 'no fixed mark of self' shows up here as: you stopped being only 'the parent' — a role with a script — and let yourself be a person who's actually lived through something like this. That's not less authority. For a fifteen-year-old at this table tonight, it's more."
+    },
+    "ending_distant": {
+      "text": "Tomorrow comes and the moment has passed — they're back to normal-seeming, phone face-up again, and the subject doesn't come back up. You get the sense something closed that night that might take a while to reopen.",
+      "ending": true,
+      "insight": "Giving your child a fixed role — 'the one having a hard time' who gets checked on later, on your schedule — isn't the same as being present with them now. The sutra's teaching on non-dwelling cuts both ways: don't dwell on fixing it, but don't dwell on your own schedule for addressing it either."
+    },
+    "ending_open": {
+      "text": "It takes forty minutes and three long silences, but eventually the whole story comes out, unforced. You didn't solve anything. You didn't need to. By the end, they're the one who says, quietly, \"Thanks for not making a big thing of it.\"",
+      "ending": true,
+      "insight": "This is the sutra's teaching on giving without dwelling, applied to attention itself: you gave your full presence without needing it to produce a fixed outcome — advice given, problem solved, parent vindicated. The presence was the whole gift."
+    }
+  }
+}

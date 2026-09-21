@@ -1,0 +1,37 @@
+[
+  {
+    "title": "The Diamond Sutra: The Perfection of Wisdom",
+    "author": "Red Pine (translator)",
+    "level": "beginner",
+    "blurb": "The translation we quote from most often on this site — clear English facing the classical Chinese, with accessible commentary.",
+    "amazonUrl": "https://www.amazon.com/dp/1593760922?tag=YOUR-AMAZON-TAG-20"
+  },
+  {
+    "title": "Zen Mind, Beginner's Mind",
+    "author": "Shunryu Suzuki",
+    "level": "beginner",
+    "blurb": "Not about the Diamond Sutra directly, but the single best companion for approaching it without a head full of assumptions.",
+    "amazonUrl": "https://www.amazon.com/dp/1590308492?tag=YOUR-AMAZON-TAG-20"
+  },
+  {
+    "title": "The Diamond That Cuts Through Illusion",
+    "author": "Thich Nhat Hanh",
+    "level": "intermediate",
+    "blurb": "A warm, application-focused commentary — closest in spirit to the 'life-feedback' approach we take here.",
+    "amazonUrl": "https://www.amazon.com/dp/1888375944?tag=YOUR-AMAZON-TAG-20"
+  },
+  {
+    "title": "The Way of Zen",
+    "author": "Alan Watts",
+    "level": "intermediate",
+    "blurb": "Essential background on how the sutra's ideas travelled into Zen practice — referenced often in our webinars.",
+    "amazonUrl": "https://www.amazon.com/dp/0375705104?tag=YOUR-AMAZON-TAG-20"
+  },
+  {
+    "title": "A Comprehensive Commentary on the Diamond Sutra",
+    "author": "Tripitaka Master Hsuan Hua",
+    "level": "advanced",
+    "blurb": "Line-by-line traditional commentary for students who want to go past the popular translations.",
+    "amazonUrl": "https://www.amazon.com/dp/0881394300?tag=YOUR-AMAZON-TAG-20"
+  }
+]

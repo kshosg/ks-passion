@@ -1,0 +1,51 @@
+{
+  "id": "ceo-townhall",
+  "title": "The Chairman's Town Hall",
+  "role": "Chairman/CEO — MNC Town Hall Q&A",
+  "level": "advanced",
+  "teaser": "A restructuring just cut 8% of headcount. You're standing on stage for the all-hands Q&A, and the first hand up looks angry.",
+  "concept": "The sutra's teaching that a true leader (bodhisattva) acts without clinging to a fixed 'mark of self' as always-right, always-in-control.",
+  "startNode": "start",
+  "nodes": {
+    "start": {
+      "text": "The microphone finds its way to a supply-chain analyst three rows back. \"You told us in January the restructuring rumors were false. Last week you cut 400 jobs. Why should anyone in this room believe a word you say for the next twelve months?\" The room goes very quiet. Every phone in the building is probably already recording.",
+      "reflection": "Before you answer: are you about to protect your image, or tell the truth — and do you actually know which one you're doing right now?",
+      "choices": [
+        { "label": "\"The decision was necessary, and I stand by it completely.\"", "next": "defend" },
+        { "label": "\"You're right to be angry. Let me tell you what I actually knew, and when.\"", "next": "acknowledge" },
+        { "label": "\"Honestly — I'm not certain it was the right call.\"", "next": "secret_honesty", "secret": true }
+      ]
+    },
+    "defend": {
+      "text": "You hold the line. A few nods from the leadership row near the front — everyone else's arms cross in near-unison. A second question comes, sharper: \"That's not an answer. That's a talking point.\" You can feel the room's trust draining, fast.",
+      "reflection": "What are you actually afraid will happen if you stop defending the decision and just tell the truth about how it felt to make it?",
+      "choices": [
+        { "label": "Hold firm — repeat the business case, louder.", "next": "ending_entrenched" },
+        { "label": "Stop. \"You're right. Let me try that again, honestly.\"", "next": "acknowledge" }
+      ]
+    },
+    "acknowledge": {
+      "text": "\"I told you in January what I believed to be true at the time. Six weeks later, the board saw numbers I hadn't seen. I should have said 'I don't know yet' instead of 'no.' That's on me, not on you for being angry about it.\" Something shifts in the room — not agreement, but a kind of attention that wasn't there before.",
+      "reflection": "Notice: did admitting the gap make you smaller in the room, or did it change what kind of leader you're being seen as?",
+      "choices": [
+        { "label": "Open the floor for harder questions — no notes, no comms team filter.", "next": "ending_trust" },
+        { "label": "Go one step further: \"If I'm honest, I'm still not sure this was the right call.\"", "next": "secret_honesty" }
+      ]
+    },
+    "secret_honesty": {
+      "text": "The room doesn't move for a full three seconds. A CEO admitting uncertainty, on record, in front of four hundred people and a dozen recording phones, is not something anyone in the building has seen before. Then, from somewhere in the back, someone starts clapping — not because you were right, but because you stopped performing certainty you didn't have. It spreads, unevenly, imperfectly, but it spreads.",
+      "ending": true,
+      "insight": "The Diamond Sutra keeps returning to one warning: a bodhisattva who clings to a fixed 'mark of self' — a permanent story of who they are — is not practicing wisdom, however good their intentions. The mark you were most attached to here wasn't the restructuring decision. It was the mark of 'the leader who is always certain.' Letting go of that mark, in public, did more for trust in the room than any correct answer could have."
+    },
+    "ending_entrenched": {
+      "text": "You finish the town hall having technically answered every question and settled nothing. Over the next two weeks, three senior engineers you can't afford to lose hand in their notice. Exit interviews all mention some version of the same line: \"I stopped believing anything they said months ago, and today confirmed it.\"",
+      "ending": true,
+      "insight": "The sutra says a bodhisattva 'should not dwell in forms, sounds, smells, tastes, textures, or dharmas' when giving — meaning: don't give (an answer, a decision, a defense) while gripping how you need to be seen for having given it. Defending the decision wasn't the mistake. Needing to be seen as someone who is never wrong about it was."
+    },
+    "ending_trust": {
+      "text": "The next forty minutes are the hardest of your career and, by the numbers three months later, the most useful. Nobody leaves the town hall agreeing the layoffs were right. Several people leave believing that, for the first time, they were told the truth by someone at the top — and that turns out to matter more than agreement ever would have.",
+      "ending": true,
+      "insight": "This is the sutra's teaching on giving (dana) applied to leadership: give the truth fully, without dwelling on whether it makes you look good, competent, or forgivable. The trust that returns isn't a reward you aimed for — it's what happens when you stop aiming at anything and just tell the truth."
+    }
+  }
+}

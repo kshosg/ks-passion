@@ -1,0 +1,29 @@
+{
+  "id": "husband-wife",
+  "title": "The Same Argument",
+  "role": "Husband–Wife Q&A",
+  "level": "beginner",
+  "teaser": "You're having the argument about chores again — the exact same one, almost word for word, for the fourth time this month.",
+  "concept": "Noticing when you're arguing with a fixed story of your spouse instead of the person actually in front of you.",
+  "startNode": "start",
+  "nodes": {
+    "start": {
+      "text": "\"You always do this,\" she says, and you can feel yourself reaching for the same defense you used last time, and the time before that. The words are already forming before she's even finished her sentence.",
+      "reflection": "Are you responding to what she actually just said, or to the version of this argument you've already had in your head a dozen times?",
+      "choices": [
+        { "label": "Make the case you always make — it usually works eventually.", "next": "ending_loop" },
+        { "label": "Stop. \"Wait — what did you actually just say? I want to hear it fresh.\"", "next": "ending_fresh" }
+      ]
+    },
+    "ending_loop": {
+      "text": "You win this round of the argument, more or less, the same way you won the last three. Nothing about the chores changes. Neither does the fact that you'll likely be having this exact conversation again within the month.",
+      "ending": true,
+      "insight": "The sutra warns against clinging to fixed 'marks' — including a fixed mark of who your spouse is and what this argument means. Fighting the story in your head, instead of the person in front of you, is a fight you can 'win' forever without anything actually changing."
+    },
+    "ending_fresh": {
+      "text": "She pauses, surprised by the question. What comes out this time isn't quite the same complaint as before — it's something underneath it, about feeling unseen on the days she does everything and nobody notices. You'd never quite heard that part before, four arguments in.",
+      "ending": true,
+      "insight": "Meeting her without the fixed mark of 'the same argument, the same wife, the same complaint' let you actually hear something new in it. The argument was old. She wasn't."
+    }
+  }
+}

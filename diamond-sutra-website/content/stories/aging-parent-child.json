@@ -1,0 +1,29 @@
+{
+  "id": "aging-parent-child",
+  "title": "The Car Keys",
+  "role": "Parent (Elderly)–Child Q&A",
+  "level": "intermediate",
+  "teaser": "Your father, 78, just asked why you're 'suddenly' so interested in whether he still drives at night.",
+  "concept": "Letting go of the fixed roles 'the parent who decides' and 'the child who obeys' as they quietly reverse.",
+  "startNode": "start",
+  "nodes": {
+    "start": {
+      "text": "\"I'm not an idiot,\" he says, before you've even finished the sentence. \"I know why you're asking. You think I can't do this anymore.\" There's more hurt in his voice than anger, even though it sounds like anger.",
+      "reflection": "Are you trying to protect him, or trying to feel like you've done the responsible thing as his child — and can you tell the difference right now?",
+      "choices": [
+        { "label": "Lay out the safety concerns plainly, one by one.", "next": "ending_managed" },
+        { "label": "\"I'm scared of losing you. That's really what this is.\"", "next": "ending_honest" }
+      ]
+    },
+    "ending_managed": {
+      "text": "He agrees, eventually, to stop driving after dark — but something in the conversation has quietly shifted the ground between you, from two adults to a manager and the managed. It's safer. It's also a little lonelier for both of you.",
+      "ending": true,
+      "insight": "The sutra's warning about the 'mark of a life-span' — clinging to a fixed story about who someone is across time — applies to roles too. Treating your father only as 'a safety risk to manage' protects him and diminishes him in the same motion."
+    },
+    "ending_honest": {
+      "text": "He's quiet for a long moment. \"I'm scared of that too,\" he finally says. The conversation about night driving still needs to happen — it does, a few minutes later — but it happens between two people who are afraid of the same thing, not across a decision being imposed.",
+      "ending": true,
+      "insight": "Giving him the truth of your fear, without needing to be seen as the responsible one who handled it correctly, let the real conversation — the one under the car keys — actually take place."
+    }
+  }
+}

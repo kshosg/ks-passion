@@ -1,0 +1,31 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #faf7f0;
+  color: #1b1a17;
+}
+
+.prose-diamond p {
+  margin-bottom: 1.1em;
+  line-height: 1.75;
+}
+
+.prose-diamond h2 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-top: 1.75em;
+  margin-bottom: 0.5em;
+}
+
+.prose-diamond blockquote {
+  border-left: 3px solid #b8862f;
+  padding-left: 1rem;
+  font-style: italic;
+  color: #4a463d;
+}

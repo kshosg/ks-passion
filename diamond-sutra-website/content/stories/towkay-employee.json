@@ -1,0 +1,29 @@
+{
+  "id": "towkay-employee",
+  "title": "The Ang Pow Question",
+  "role": "Boss/Towkay–Employee (SME) Q&A",
+  "level": "intermediate",
+  "teaser": "Your longest-serving employee asks, quietly, after closing: \"Boss, is the shop actually doing okay? People are talking.\"",
+  "concept": "Running a business without clinging to the fixed mark of 'towkay who always has it under control.'",
+  "startNode": "start",
+  "nodes": {
+    "start": {
+      "text": "She's worked the counter for eleven years, since before your father handed you the keys. She's not asking to gossip. She's asking because her name is on the payroll too.",
+      "reflection": "Is keeping up appearances actually protecting the shop, or just protecting your own sense of being the boss who has everything under control?",
+      "choices": [
+        { "label": "\"Don't worry about it, everything's fine.\"", "next": "ending_appearance" },
+        { "label": "\"Honestly — it's tight. Here's exactly where we stand.\"", "next": "ending_honest" }
+      ]
+    },
+    "ending_appearance": {
+      "text": "She nods and goes back to closing up. Three weeks later she gives notice for a job with steadier hours. In the exit conversation she mentions, gently, that she'd have stayed and helped if she'd known how bad things really were — she just didn't feel trusted with the truth.",
+      "ending": true,
+      "insight": "The sutra's 'mark of self' isn't only personal vanity — for a towkay it can be the fixed identity of 'the boss who has it handled.' Protecting that mark cost you the one person who might have helped you handle it."
+    },
+    "ending_honest": {
+      "text": "She's quiet for a moment, then starts talking through ideas — a supplier she knows who'd extend better terms, a slow weekday she thinks you could close early. None of it fixes everything. All of it helps, and none of it would have come if you'd kept performing certainty.",
+      "ending": true,
+      "insight": "Giving her the real picture, without dwelling on your pride as towkay, turned an employee into a partner in solving the problem. That's the sutra's teaching on giving fully, without a fixed idea of what you have to protect in the giving."
+    }
+  }
+}

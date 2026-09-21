@@ -1,0 +1,51 @@
+{
+  "id": "manager-executive",
+  "title": "The Performance Review",
+  "role": "Manager/Supervisor — Executive Q&A",
+  "level": "intermediate",
+  "teaser": "Your most talented direct report just missed their second deadline this quarter. The review is in ten minutes and you still don't know what you're going to say.",
+  "concept": "Acting 'without dwelling' — giving full, honest feedback without needing to be seen as the good manager, the tough manager, or the right one.",
+  "startNode": "start",
+  "nodes": {
+    "start": {
+      "text": "She sits down before you do, already half-apologizing: \"I know. I know it's late again. Before you say anything — I know.\" You'd planned three different openings on the walk over and now none of them feel right.",
+      "reflection": "Which of your three planned openings was actually about her performance, and which was about how you wanted to come across in this room?",
+      "choices": [
+        { "label": "Go straight to the missed deadlines and the pattern behind them.", "next": "direct" },
+        { "label": "Ask what's actually going on before saying anything about performance.", "next": "ask_first" },
+        { "label": "\"I've been dreading this conversation too.\"", "next": "secret_mutual", "secret": true }
+      ]
+    },
+    "direct": {
+      "text": "You lay out the pattern clearly — two missed deadlines, a dip in the quality of the last two deliverables. She nods along, takes notes, agrees to a plan. It's a clean, professional fifteen minutes. You leave feeling like you did your job. She leaves saying almost nothing you didn't already know she'd say.",
+      "reflection": "The meeting went well by every visible measure. Did it actually change anything, or did it just confirm a story you'd both already written in advance?",
+      "choices": [
+        { "label": "Consider it handled — move to the next item on your list.", "next": "ending_efficient" },
+        { "label": "Stop before she leaves: \"Actually — what's really going on?\"", "next": "ask_first" }
+      ]
+    },
+    "ask_first": {
+      "text": "She's quiet for a moment, then: \"My mother's been in and out of hospital since June. I haven't told anyone here because I didn't want to be 'the person going through something' — I wanted to still be the person who delivers.\" The performance numbers haven't changed. Everything else about the conversation has.",
+      "reflection": "You still have to address the deadlines. Can you hold both truths — the work needs to improve, and she's carrying something real — without collapsing into only one of them?",
+      "choices": [
+        { "label": "Adjust the plan together: real deadlines, real support, no pretending.", "next": "ending_seen" },
+        { "label": "\"For what it's worth — I've had a quarter like this too.\"", "next": "secret_mutual" }
+      ]
+    },
+    "secret_mutual": {
+      "text": "You tell her, briefly, about the year you missed a deliverable because your father was dying and you didn't tell your own manager either. It's not a long story. It doesn't need to be. The meeting stops being a review and becomes two people agreeing on what actually needs to happen next — deadlines included.",
+      "ending": true,
+      "insight": "The Diamond Sutra's teaching on 'no fixed mark of self, person, being, or life-span' isn't abstract here: the moment you stopped needing to be 'the manager' facing 'the underperformer' — two fixed roles — and let both of you be two people who've had a hard year, the actual work of the conversation could finally happen."
+    },
+    "ending_efficient": {
+      "text": "Six weeks later, she hands in her notice. In the exit conversation, she mentions the review almost in passing: \"It was fine. It just felt like you were managing me, not talking to me.\" You realize, too late, that 'handled correctly' and 'handled honestly' were never the same thing.",
+      "ending": true,
+      "insight": "The sutra warns against giving — including feedback — while 'dwelling in forms': attached to doing it the correct, professional, defensible way. A technically correct review that protects your own mark of 'competent manager' can still fail the person in front of you completely."
+    },
+    "ending_seen": {
+      "text": "The revised plan is more honest than the original one would have been — real deadlines she can actually hit, one project quietly reassigned, a standing weekly check-in neither of you pretend is really about deadlines. Performance recovers within the month. So, more slowly, does she.",
+      "ending": true,
+      "insight": "This is dana — giving — without dwelling on being seen as the tough manager or the soft one. You gave her your full attention before you gave her your assessment, and the assessment changed because of it."
+    }
+  }
+}
