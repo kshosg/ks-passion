@@ -43,7 +43,7 @@ FREESOUND_RESULTS = {"results": [
 ]}
 
 
-def _fake_download(url, dest):
+def _fake_download(url, dest, referer=None):
     dest.parent.mkdir(parents=True, exist_ok=True)
     dest.write_bytes(b"ID3fake")
 
@@ -142,3 +142,45 @@ def test_non_json_reply_is_explained(monkeypatch):
     monkeypatch.setattr(http_mod.urllib.request, "urlopen", lambda req, timeout: Resp(b"<html>maintenance</html>"))
     with pytest.raises(RuntimeError, match="isn't JSON"):
         http_mod.get_json("https://ccmixter.org/api/query", {"f": "json"})
+
+
+def test_download_retries_https_and_sends_referer(tmp_path, monkeypatch):
+    import io
+    import urllib.error
+
+    from songspeak.sources import http as http_mod
+
+    seen = []
+
+    class Resp(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    def fake_urlopen(req, timeout):
+        seen.append((req.full_url, req.get_header("Referer"), req.get_header("User-agent")))
+        if req.full_url.startswith("http://"):
+            raise urllib.error.HTTPError(req.full_url, 403, "Forbidden", {}, None)
+        return Resp(b"ID3audio")
+
+    monkeypatch.setattr(http_mod.urllib.request, "urlopen", fake_urlopen)
+    dest = tmp_path / "a.mp3"
+    http_mod.download("http://ccmixter.org/content/x/a.mp3", dest, referer="https://ccmixter.org/files/x/1")
+    assert dest.read_bytes() == b"ID3audio"
+    assert [u for u, _, _ in seen] == ["http://ccmixter.org/content/x/a.mp3", "https://ccmixter.org/content/x/a.mp3"]
+    assert seen[0][1] == "https://ccmixter.org/files/x/1" and "Mozilla" in seen[0][2]
+
+
+def test_download_failure_names_the_link(tmp_path, monkeypatch):
+    import urllib.error
+
+    from songspeak.sources import http as http_mod
+
+    def always_403(req, timeout):
+        raise urllib.error.HTTPError(req.full_url, 403, "Forbidden", {}, None)
+
+    monkeypatch.setattr(http_mod.urllib.request, "urlopen", always_403)
+    with pytest.raises(RuntimeError, match=r"HTTP 403 / HTTP 403 for http://x.org/a.mp3"):
+        http_mod.download("http://x.org/a.mp3", tmp_path / "a.mp3")

@@ -45,7 +45,7 @@ def collect(
 
         rel = f"audio/{cand.song_id}{_suffix(cand.download_url)}"
         try:
-            download(cand.download_url, library.root / rel)
+            download(cand.download_url, library.root / rel, referer=cand.page_url)
         except Exception as exc:  # one bad download shouldn't stop the batch
             report.skipped.append((label, f"download failed: {exc}"))
             continue

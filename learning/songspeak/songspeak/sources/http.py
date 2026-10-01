@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import http.client
 import json
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -29,11 +30,36 @@ def get_json(url: str, params: dict | None = None, timeout: float = 30) -> objec
         raise RuntimeError(f"{host} sent back something that isn't JSON (starts: {body[:80]!r}); try again later") from exc
 
 
-def download(url: str, dest: Path, timeout: float = 120) -> None:
-    """Stream a file to disk, refusing anything implausibly large for one song."""
+# Some file servers (ccMixter's included) answer 403 to requests that don't look like a browser download.
+BROWSER_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) SongSpeak/0.1"
+
+
+def download(url: str, dest: Path, referer: str | None = None, timeout: float = 120) -> None:
+    """Stream a file to disk, refusing anything implausibly large for one song.
+
+    Tries the URL as given and its https:// form, sending the song's page as the Referer,
+    because some catalogues refuse "hotlinked" downloads.
+    """
+    urls = [url]
+    if url.startswith("http://"):
+        urls.append("https://" + url[len("http://") :])
+    errors = []
+    for candidate in urls:
+        try:
+            _download_once(candidate, dest, referer, timeout)
+            return
+        except urllib.error.HTTPError as exc:
+            errors.append(f"HTTP {exc.code}")
+    raise RuntimeError(f"{' / '.join(errors)} for {url} (try opening that link in your browser)")
+
+
+def _download_once(url: str, dest: Path, referer: str | None, timeout: float) -> None:
     dest.parent.mkdir(parents=True, exist_ok=True)
     tmp = dest.with_suffix(dest.suffix + ".part")
-    req = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
+    headers = {"User-Agent": BROWSER_USER_AGENT, "Accept": "audio/*,*/*;q=0.8"}
+    if referer:
+        headers["Referer"] = referer
+    req = urllib.request.Request(url, headers=headers)
     with urllib.request.urlopen(req, timeout=timeout) as resp, open(tmp, "wb") as out:
         total = 0
         while chunk := resp.read(1 << 16):
