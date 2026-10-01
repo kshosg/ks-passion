@@ -14,6 +14,7 @@ import subprocess
 import warnings
 from pathlib import Path
 
+from songspeak import audio
 from songspeak.library import Library, Song, Word
 from songspeak.text import normalize_words
 
@@ -42,7 +43,10 @@ def transcribe(path: Path, model_size: str = "small", language: str | None = "en
         raise RuntimeError("faster-whisper is not installed: pip install -e .[ingest]") from exc
 
     model = _load_model(model_size)
-    segments, _ = model.transcribe(str(path), language=language, word_timestamps=True)
+    # Decode with ffmpeg ourselves and pass the samples, rather than letting faster-whisper open the
+    # file with PyAV: PyAV 15+ dropped an argument faster-whisper 1.2 still passes (TypeError: metadata_errors).
+    samples = audio.load_for_speech(path)
+    segments, _ = model.transcribe(samples, language=language, word_timestamps=True)
     words: list[Word] = []
     for seg in segments:
         for w in seg.words or []:
@@ -81,17 +85,33 @@ def ingest(
     force: bool = False,
     log=print,
 ) -> int:
-    """Transcribe every song that has no transcript yet. Returns how many were processed."""
-    done = 0
+    """Transcribe every song that has no transcript yet. Returns how many were processed.
+
+    A song that fails (bad file, decode error) is reported and skipped so the rest of the batch
+    still runs; it has no transcript, so the next run tries it again.
+    """
+    try:
+        import faster_whisper  # noqa: F401  (fail once, up front, rather than once per song)
+    except ImportError as exc:
+        raise RuntimeError("faster-whisper is not installed: pip install -e .[ingest]") from exc
+
+    done, failed = 0, []
     for song in library.songs.values():
         if song.transcript and not force:
             continue
         log(f"Ingesting {song.credit} ...")
-        if isolate and not song.vocals:
-            isolate_vocals(library, song)
-        words = transcribe(library.audio_path(song, prefer_vocals=True), model_size, language)
+        try:
+            if isolate and not song.vocals:
+                isolate_vocals(library, song)
+            words = transcribe(library.audio_path(song, prefer_vocals=True), model_size, language)
+        except Exception as exc:  # noqa: BLE001  one bad song shouldn't stop an hour-long batch
+            log(f"  failed, skipped: {type(exc).__name__}: {exc}")
+            failed.append(song.credit)
+            continue
         library.save_transcript(song, words)
         library.save()  # save as we go, so a crash halfway keeps finished songs
         log(f"  {len(words)} words")
         done += 1
+    if failed:
+        log(f"{len(failed)} song(s) failed and will be retried next run: {', '.join(failed)}")
     return done

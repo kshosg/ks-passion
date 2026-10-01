@@ -23,12 +23,17 @@ def load_mono(path: Path) -> np.ndarray:
     return _ffmpeg_decode(path)
 
 
-def _ffmpeg_decode(path: Path) -> np.ndarray:
+def _ffmpeg_decode(path: Path, sr: int = SR) -> np.ndarray:
     if not shutil.which("ffmpeg"):
         raise RuntimeError(f"ffmpeg is needed to read {path.name}; install it or convert to 16-bit 44.1 kHz WAV.")
-    cmd = ["ffmpeg", "-v", "error", "-i", str(path), "-f", "f32le", "-ac", "1", "-ar", str(SR), "-"]
+    cmd = ["ffmpeg", "-v", "error", "-i", str(path), "-f", "f32le", "-ac", "1", "-ar", str(sr), "-"]
     raw = subprocess.run(cmd, check=True, capture_output=True).stdout
     return np.frombuffer(raw, dtype="<f4").copy()
+
+
+def load_for_speech(path: Path) -> np.ndarray:
+    """Mono float32 at 16 kHz, the format speech recognisers expect. Decoded with ffmpeg."""
+    return _ffmpeg_decode(Path(path), 16_000)
 
 
 def cut(samples: np.ndarray, start: float, end: float, pad_before: float, pad_after: float) -> np.ndarray:
