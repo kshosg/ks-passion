@@ -11,6 +11,7 @@ import numpy as np
 
 from songspeak import audio
 from songspeak.library import Library
+from songspeak.licenses import OutputTerms, output_terms
 from songspeak.matcher import Segment
 from songspeak.text import LONG_PAUSE, SHORT_PAUSE
 
@@ -41,13 +42,20 @@ class RenderResult:
     missing: list[str] = field(default_factory=list)
 
 
-def render(segments: list[Segment], library: Library, out_path: Path, settings: RenderSettings | None = None) -> RenderResult:
+def render(
+    segments: list[Segment],
+    library: Library,
+    out_path: Path,
+    settings: RenderSettings | None = None,
+    decoded: dict[str, np.ndarray] | None = None,
+) -> RenderResult:
+    """Write the audio. ``decoded`` can be a long-lived cache of decoded songs (the web server keeps one)."""
     settings = settings or RenderSettings()
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     wav_path = out_path if out_path.suffix.lower() == ".wav" else Path(tempfile.mkstemp(suffix=".wav")[1])
 
-    decoded: dict[str, np.ndarray] = {}
+    decoded = {} if decoded is None else decoded
     with audio.WavWriter(wav_path) as out:
         for n, seg in enumerate(segments):
             out.write(_clip_for(seg, library, settings, decoded))
@@ -97,7 +105,9 @@ def credits(segments: list[Segment]) -> list[dict]:
                 song=seg.song.title,
                 artist=seg.song.artist,
                 at=f"{_mmss(seg.start)}-{_mmss(seg.end)}",
-                license=seg.song.license,
+                license=seg.song.lic.label,
+                license_url=seg.song.lic.url,
+                source_url=seg.song.source_url,
                 confidence=round(seg.confidence, 2),
             )
         rows.append(row)
@@ -114,8 +124,34 @@ def credits_text(segments: list[Segment]) -> str:
     return "\n".join(lines)
 
 
+def terms(segments: list[Segment]) -> OutputTerms:
+    return output_terms([s.song.lic for s in segments if s.song])
+
+
+def attribution(segments: list[Segment]) -> list[str]:
+    """One Creative Commons-style credit (title, author, source, licence) per song used, in order of first use."""
+    lines, seen = [], set()
+    for seg in segments:
+        song = seg.song
+        if not song or song.id in seen:
+            continue
+        seen.add(song.id)
+        lic = song.lic
+        if not lic.attribution and not song.source_url:
+            continue
+        line = f'"{song.title}" by {song.artist}'
+        if song.source_url:
+            line += f" ({song.source_url})"
+        line += f", {lic.label}"
+        if lic.url:
+            line += f" ({lic.url})"
+        lines.append(line + ". Excerpts cut and rearranged.")
+    return lines
+
+
 def write_credits(segments: list[Segment], path: Path) -> None:
-    Path(path).write_text(json.dumps(credits(segments), indent=2) + "\n", encoding="utf-8")
+    payload = {"terms": terms(segments).notice, "attribution": attribution(segments), "clips": credits(segments)}
+    Path(path).write_text(json.dumps(payload, indent=2) + "\n", encoding="utf-8")
 
 
 def _mmss(seconds: float) -> str:

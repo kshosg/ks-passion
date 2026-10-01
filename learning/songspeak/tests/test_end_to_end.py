@@ -33,7 +33,7 @@ def test_cli_make_with_missing_word(tmp_path, capsys):
     assert code == 0
     assert out.exists()
     credits = json.loads(out.with_suffix(".credits.json").read_text())
-    assert [c["found"] for c in credits] == [True, False, False]
+    assert [c["found"] for c in credits["clips"]] == [True, False, False]
     assert "not in the library yet: Kuala, Lumpur" in capsys.readouterr().out
 
 

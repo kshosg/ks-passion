@@ -13,7 +13,7 @@ def _words(line, seconds_per_word=0.4, prob=0.9):
 
 def _setup(songs):
     """songs: (id, moods, line[, seconds_per_word])"""
-    library = Library("/nonexistent", [Song(s[0], s[0].title(), "Artist", f"{s[0]}.wav", "test", list(s[1])) for s in songs])
+    library = Library("/nonexistent", [Song(s[0], s[0].title(), "Artist", f"{s[0]}.wav", "CC0-1.0", list(s[1])) for s in songs])
     index = PhraseIndex()
     for s in songs:
         index.add_song(s[0], _words(s[2], *s[3:]))

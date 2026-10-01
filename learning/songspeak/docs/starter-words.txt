@@ -1,0 +1,13 @@
+# Words a first library should cover. Check with:
+#   songspeak stats --library library --coverage docs/starter-words.txt
+hello hi hey goodbye bye welcome thank thanks you please sorry yes no okay
+i me my we us our you your he she they them it this that these those
+a an the and or but so because if when where why how what who
+is am are was were be been being have has had do does did will would can could should
+love like want need know think feel see look hear say tell come go get make take give
+good great happy sad beautiful amazing best better new old big little
+day night today tonight tomorrow morning time year life world home heart friend family
+everybody everyone somebody nobody all every one two three four five six seven eight nine ten
+here there now never always forever again together alone
+birthday wedding congratulations party dance sing song music
+singapore malaysia asia city island lion

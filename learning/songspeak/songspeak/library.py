@@ -13,6 +13,8 @@ import json
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
+from songspeak.licenses import License, LicensePolicy, parse_license
+
 MANIFEST = "manifest.json"
 
 
@@ -22,14 +24,23 @@ class Song:
     title: str
     artist: str
     audio: str  # path relative to the library root
-    license: str  # how we are allowed to use this recording; shown in the credits
+    license: str  # CC URL, SPDX-style code or OWNED / ROYALTY-FREE / PD (see licenses.py)
     moods: list[str] = field(default_factory=list)
     vocals: str | None = None
     transcript: str | None = None
+    source: str = "local"  # where it came from: ccmixter, freesound, local, demo
+    source_url: str = ""  # the page we got it from, for attribution
+    license_note: str = ""  # e.g. where a royalty-free licence was bought and what it allows
 
     @property
     def credit(self) -> str:
         return f"{self.title} - {self.artist}"
+
+    @property
+    def lic(self) -> License:
+        lic = parse_license(self.license)
+        assert lic is not None, "validated when the library loads"
+        return lic
 
 
 @dataclass
@@ -45,11 +56,21 @@ class Library:
         self.root = Path(root)
         self.songs: dict[str, Song] = {}
         for song in songs:
-            if not song.license.strip():
-                raise ValueError(f"Song {song.id!r} has no licence. Record how you may use it before adding it.")
-            if song.id in self.songs:
-                raise ValueError(f"Duplicate song id {song.id!r}")
-            self.songs[song.id] = song
+            self.add(song)
+
+    def add(self, song: Song) -> None:
+        if parse_license(song.license) is None:
+            raise ValueError(
+                f"Song {song.id!r} has licence {song.license!r}, which isn't recognised. "
+                "Use a Creative Commons URL/code, OWNED, ROYALTY-FREE or PD."
+            )
+        if song.id in self.songs:
+            raise ValueError(f"Duplicate song id {song.id!r}")
+        self.songs[song.id] = song
+
+    def usable(self, policy: LicensePolicy) -> list[Song]:
+        """Songs whose licence allows remixing under this policy."""
+        return [s for s in self.songs.values() if policy.allows(s.lic)]
 
     @classmethod
     def load(cls, root: Path | str) -> "Library":

@@ -1,10 +1,11 @@
-# SongSpeak — Product Spec (v0.1)
+# SongSpeak — Product Spec (v0.2)
 
 > Type a message. Hear it "sung" back, one word or phrase at a time, by a different song for each piece.
 > Think of a ransom note cut from magazine letters, made from songs instead.
 
-**Status:** MVP engine is built and tested (`learning/songspeak/`). The biggest open question is
-**where the songs come from**. That is a legal and business question more than a technical one (see §3).
+**Status:** the Creative Commons MVP is built (`learning/songspeak/`): ccMixter + Freesound connectors,
+royalty-free import, licence enforcement, and a web app. **Decision taken:** launch on path 2 (Creative Commons +
+royalty-free), keeping path 1 (owned word bank) for premium. Next: build the first real library and test with friends (§5).
 
 ---
 
@@ -124,10 +125,26 @@ expensive and slow, and labels usually won't negotiate with a startup that has n
 - [x] Ingest: vocal isolation + word-level transcription
 - [x] Longest-phrase matcher with variety, shuffle and missing-word reporting
 - [x] WAV/MP3 output + credits (JSON and text)
-- [x] Synthetic demo library, 15 automated tests
-- [ ] **Library v1**: 50–100 songs from path 1 or 2 above, ingested and checked for quality
-- [ ] Simple web page: textbox → play button → download + credits
-- [ ] 10 friends test it: does the output make them laugh or smile? Would they share it?
+- [x] Synthetic demo library, automated tests (28)
+- [x] **Creative Commons sourcing**: ccMixter a cappellas (no key), Freesound CC0/CC BY sung clips (free key),
+      `add` for bought royalty-free packs (requires a written licence note)
+- [x] **Licence engine**: ND always refused; NC only in personal mode and never in paid renders; SA output terms
+      calculated; attribution in title-author-source-licence form generated for every render
+- [x] **Web MVP**: type → play → download → copy credits; free/premium toggle; shuffle; mobile + dark mode
+- [ ] **Library v1**: run `scripts/build_cc_library.sh`, aim for **≥ 60% coverage** of `docs/starter-words.txt`
+      on commercial-safe licences, and spot-check the 50 most-used words by ear
+- [ ] Fill gaps: commission recordings of missing high-value words (Singapore, lah, Merlion, names) — the first
+      step toward path 1
+- [ ] Deploy (a small VPS, e.g. Hetzner/DigitalOcean, behind Caddy) and get 10 friends testing it: does it make them smile? Would they share it?
+
+### What to expect from a CC library
+- **Licence mix:** many ccMixter a cappellas are CC BY-NC, so the commercial-safe library is smaller. `songspeak stats`
+  shows the split, and `--allow-nc` turns on a personal mode for your own experiments.
+- **Accuracy:** Whisper mishears sung words. A cappellas help a lot. Use `--model medium` once the pipeline works,
+  and remove bad clips after listening.
+- **Vocabulary:** songs cover common words well but miss names and places. Freesound one-shots and commissioned words fill those gaps.
+- **Attribution is part of the product:** the credits panel lists "Title" by Artist (link), licence (link), and notes
+  the excerpts were cut and rearranged. Users must keep it with anything they post.
 
 ## 6. Premium (paid) — future
 
@@ -149,20 +166,20 @@ office farewell messages.
 | Phase | Weeks | Outcome |
 |---|---|---|
 | 0. Engine | done | This repo: CLI, tests, demo |
-| 1. Library v1 | 2–4 | 50–100 songs/word-bank recordings, ingested + QA'd; pick path 1 vs 2 |
-| 2. Web MVP | 2–3 | Single page app, shareable link, credits panel |
+| 1. Library v1 | 1–2 | Connectors done; next: fetch + ingest the CC library, QA by ear, list gaps to commission |
+| 2. Web MVP | built; 1 to deploy | Single-page app + credits panel built; next: deploy, shareable links |
 | 3. Creator loop | 2 | Build in public on TikTok: "I turned your comments into a song" series. Content and user research at once |
 | 4. Premium | 4+ | Auth + Stripe, 30k chars as background jobs, moods, mix modes, video export |
 | 5. Licensing | ongoing | Lawyer review; approach aggregators/labels with traction numbers |
 
 ## 8. Open questions for KS
 
-1. **Library path:** commission an owned word bank (path 1), start with Creative Commons (path 2), or both?
+1. ~~**Library path**~~ → Creative Commons + royalty-free first (decided). Owned word bank later, for premium moods.
 2. **Personal tool or public product?** A private bring-your-own-songs tool can ship this week; a public app needs path 1/2.
 3. **Languages:** English only for MVP, or Singlish/Mandarin/Malay words early as the local differentiator?
 4. **Tie-in with the creator brand:** run it as a TikTok series from day one (content pillar 4, "building in public")?
 
 ---
 
-*Next concrete step:* pick the library path (Q1). If it's path 1, draft a 300-word starter list and a singer brief.
-If it's path 2, gather 20 CC a cappella tracks from ccMixter, run `songspeak ingest`, and listen to the results.
+*Next concrete step:* on your own machine, run `scripts/build_cc_library.sh library 3` and then `songspeak serve --library library`.
+Type five messages you'd actually send and note which words are missing or sound wrong. That list becomes the brief for library v2.

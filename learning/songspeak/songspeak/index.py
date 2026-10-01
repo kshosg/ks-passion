@@ -10,6 +10,7 @@ from collections import defaultdict
 from dataclasses import dataclass
 
 from songspeak.library import Library, Word
+from songspeak.licenses import LicensePolicy
 
 MAX_PHRASE = 8
 
@@ -28,9 +29,12 @@ class PhraseIndex:
         self._grams: dict[tuple[str, ...], list[Occurrence]] = defaultdict(list)
 
     @classmethod
-    def from_library(cls, library: Library, max_phrase: int = MAX_PHRASE) -> "PhraseIndex":
+    def from_library(
+        cls, library: Library, policy: LicensePolicy | None = None, max_phrase: int = MAX_PHRASE
+    ) -> "PhraseIndex":
+        """Index every song the licence policy allows (by default: commercial-safe licences only)."""
         index = cls(max_phrase)
-        for song in library.songs.values():
+        for song in library.usable(policy or LicensePolicy()):
             index.add_song(song.id, library.load_transcript(song))
         return index
 
