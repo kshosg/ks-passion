@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "songspeak"
+version = "0.1.0"
+description = "Turn a typed message into audio stitched together from words sung in songs."
+requires-python = ">=3.10"
+dependencies = ["numpy>=1.24"]
+
+[project.optional-dependencies]
+ingest = ["faster-whisper>=1.0"]
+vocals = ["demucs>=4.0"]
+dev = ["pytest>=7"]
+
+[project.scripts]
+songspeak = "songspeak.cli:main"
+
+[tool.setuptools]
+packages = ["songspeak"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

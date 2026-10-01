@@ -1,0 +1,8 @@
+__pycache__/
+*.egg-info/
+.pytest_cache/
+# Audio is never committed: it is large and usually someone else's copyright.
+library/
+out/
+*.wav
+*.mp3
