@@ -111,3 +111,34 @@ def test_add_local_royalty_free_needs_a_note(tmp_path):
 
 def test_moods_from_tags():
     assert moods_from_tags(["Chill", "love", "rap"]) == ["calm", "hiphop", "romantic"]
+
+
+def test_fetch_errors_are_one_line_not_a_crash(tmp_path, monkeypatch, capsys):
+    import http.client
+
+    from songspeak.cli import main
+
+    def broken(*args, **kwargs):
+        raise http.client.LineTooLong("header line")
+
+    monkeypatch.setattr(ccmixter, "get_json", broken)
+    monkeypatch.setattr(ccmixter.search, "__defaults__", ("acappella", None, 50, 0, "rank", broken))
+    assert main(["fetch", "ccmixter", "--library", str(tmp_path / "lib")]) == 1
+    assert "error:" in capsys.readouterr().err
+
+
+def test_non_json_reply_is_explained(monkeypatch):
+    import io
+
+    from songspeak.sources import http as http_mod
+
+    class Resp(io.BytesIO):
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *exc):
+            return False
+
+    monkeypatch.setattr(http_mod.urllib.request, "urlopen", lambda req, timeout: Resp(b"<html>maintenance</html>"))
+    with pytest.raises(RuntimeError, match="isn't JSON"):
+        http_mod.get_json("https://ccmixter.org/api/query", {"f": "json"})

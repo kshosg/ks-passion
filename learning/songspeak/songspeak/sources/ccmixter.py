@@ -3,7 +3,7 @@
 A cappellas are ideal for SongSpeak: the vocals are already isolated, so transcription is more
 accurate and the clips are clean. No API key is needed.
 
-API: http://ccmixter.org/api/query?f=json&tags=acappella&limit=..&offset=..&sort=..
+API: https://ccmixter.org/api/query?f=json&tags=acappella&limit=..&offset=..&sort=..
 Each upload lists its licence URL and its files; we take the first MP3.
 """
 
@@ -12,7 +12,7 @@ from __future__ import annotations
 from songspeak.sources import Candidate
 from songspeak.sources.http import get_json
 
-API = "http://ccmixter.org/api/query"
+API = "https://ccmixter.org/api/query"
 
 
 def search(
@@ -46,7 +46,7 @@ def parse_upload(item: dict) -> Candidate | None:
         title=item.get("upload_name") or f"Upload {item['upload_id']}",
         artist=item.get("user_real_name") or item.get("user_name") or "Unknown artist",
         license=item["license_url"],
-        page_url=item.get("file_page_url") or f"http://ccmixter.org/files/{item.get('user_name', '')}/{item['upload_id']}",
+        page_url=item.get("file_page_url") or f"https://ccmixter.org/files/{item.get('user_name', '')}/{item['upload_id']}",
         download_url=mp3["download_url"],
         tags=tags,
         a_cappella="acappella" in tags,

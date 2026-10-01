@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import http.client
 import sys
 from pathlib import Path
 
@@ -98,7 +99,8 @@ def main(argv: list[str] | None = None) -> int:
     }  # fmt: skip
     try:
         return commands[args.command](args)
-    except (TextTooLong, TierError, RuntimeError, OSError, ValueError) as exc:  # OSError: files, network
+    except (TextTooLong, TierError, RuntimeError, OSError, ValueError, http.client.HTTPException) as exc:
+        # OSError covers files and network errors; HTTPException covers servers that send malformed replies
         print(f"error: {exc}", file=sys.stderr)
         return 1
 
