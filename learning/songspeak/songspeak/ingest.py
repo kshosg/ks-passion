@@ -8,8 +8,10 @@ Heavy, optional dependencies (install with `pip install -e .[ingest,vocals]`):
 
 from __future__ import annotations
 
+import os
 import shutil
 import subprocess
+import warnings
 from pathlib import Path
 
 from songspeak.library import Library, Song, Word
@@ -31,18 +33,34 @@ def isolate_vocals(library: Library, song: Song, model: str = "htdemucs") -> Non
 
 def transcribe(path: Path, model_size: str = "small", language: str | None = "en") -> list[Word]:
     """Every sung word with start/end times."""
+    # Harmless on Windows, but alarming to read: no symlink support, no Hugging Face login.
+    os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
+    warnings.filterwarnings("ignore", message=".*unauthenticated requests.*")
     try:
         from faster_whisper import WhisperModel
     except ImportError as exc:
         raise RuntimeError("faster-whisper is not installed: pip install -e .[ingest]") from exc
 
-    model = WhisperModel(model_size, device="auto", compute_type="auto")
+    model = _load_model(model_size)
     segments, _ = model.transcribe(str(path), language=language, word_timestamps=True)
     words: list[Word] = []
     for seg in segments:
         for w in seg.words or []:
             words.extend(split_word(w.word, w.start, w.end, w.probability))
     return words
+
+
+_models: dict = {}
+
+
+def _load_model(model_size: str):
+    """Load the Whisper model once per run; the first run ever downloads it."""
+    if model_size not in _models:
+        from faster_whisper import WhisperModel
+
+        print(f"Loading the '{model_size}' speech model (the first time, this downloads ~0.5 GB; please wait)...")
+        _models[model_size] = WhisperModel(model_size, device="auto", compute_type="auto")
+    return _models[model_size]
 
 
 def split_word(raw: str, start: float, end: float, prob: float) -> list[Word]:
