@@ -9,13 +9,15 @@ Lines starting with `#` are notes. Don't type them.
 
 Download and run the **x64** installer: https://www.python.org/ftp/python/3.12.10/python-3.12.10-amd64.exe
 (on the first screen, leave "Add python.exe to PATH" **unticked** so it doesn't clash with any other Python you have).
+If the installer opens on "Modify Setup", it's already installed: click Cancel.
 Then close PowerShell, open a new window, and check:
 ```powershell
 py -0p
-py -V:3.12 -c "import platform; print(platform.machine())"
+py -V:3.12 -c "import sysconfig; print(sysconfig.get_platform())"
 ```
 `py -0p` lists every Python installed. The x64 one shows as **`-V:3.12`** and the ARM one, if you have it, as `-V:3.12-arm64`.
-The second line must print **AMD64**. If it prints ARM64 or "No suitable Python runtime found", the x64 installer didn't run.
+The second line must print **win-amd64**. (Don't check with `platform.machine()`: on an ARM PC it reports the processor, ARM64, even for x64 Python.)
+If it prints win-arm64 or "No suitable Python runtime found", the x64 installer didn't run.
 
 Why x64, even on an ARM laptop (Snapdragon / Surface)? The speech-recognition engine used in "Build a real library"
 (CTranslate2, behind faster-whisper) has no Windows-on-ARM build. Windows runs x64 Python automatically through
@@ -111,7 +113,7 @@ python -m songspeak serve --library library
 | The prompt doesn't start with `(.venv)` | Run `.\.venv\Scripts\Activate.ps1` again from the `learning\songspeak` folder |
 | `does not appear to be a Python project` | You're in the wrong folder: `cd $HOME\Documents\ks-passion\learning\songspeak` |
 | `faster-whisper` / `ctranslate2` fails to install | The environment was made with ARM or 3.14 Python: delete the `.venv` folder and redo steps 4–5 with `py -V:3.12` |
-| `py -V:3.12` says no suitable Python / prints ARM64 | Run the x64 installer from step 1, then open a new PowerShell window |
+| `py -V:3.12` says no suitable Python / prints win-arm64 | Run the x64 installer from step 1, then open a new PowerShell window |
 | `HTTP Error 403` / connection errors on fetch | Check your internet connection or VPN, then try again; ccMixter is sometimes slow |
 
 Stuck? Copy the whole PowerShell output into the chat, like you did before. That's exactly what's needed.
