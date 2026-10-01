@@ -17,6 +17,9 @@ from songspeak.tiers import FREE, MIX_FEWEST_SONGS, MIX_VARIETY, TIERS, TierErro
 
 
 def main(argv: list[str] | None = None) -> int:
+    for stream in (sys.stdout, sys.stderr):  # song titles can contain characters an old Windows console can't show
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(errors="replace")
     parser = argparse.ArgumentParser(prog="songspeak", description="Say anything with words sung in songs.")
     sub = parser.add_subparsers(dest="command", required=True)
 

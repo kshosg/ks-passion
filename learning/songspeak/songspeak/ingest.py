@@ -26,7 +26,7 @@ def isolate_vocals(library: Library, song: Song, model: str = "htdemucs") -> Non
     stem = out_dir / model / src.stem / "vocals.wav"
     target = out_dir / f"{song.id}.wav"
     stem.replace(target)
-    song.vocals = str(target.relative_to(library.root))
+    song.vocals = target.relative_to(library.root).as_posix()  # same manifest on Windows and Mac
 
 
 def transcribe(path: Path, model_size: str = "small", language: str | None = "en") -> list[Word]:

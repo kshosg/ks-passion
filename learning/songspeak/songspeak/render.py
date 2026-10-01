@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -53,7 +54,12 @@ def render(
     settings = settings or RenderSettings()
     out_path = Path(out_path)
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    wav_path = out_path if out_path.suffix.lower() == ".wav" else Path(tempfile.mkstemp(suffix=".wav")[1])
+    if out_path.suffix.lower() == ".wav":
+        wav_path = out_path
+    else:
+        fd, tmp = tempfile.mkstemp(suffix=".wav")
+        os.close(fd)  # Windows can't delete a file that still has an open handle
+        wav_path = Path(tmp)
 
     decoded = {} if decoded is None else decoded
     with audio.WavWriter(wav_path) as out:

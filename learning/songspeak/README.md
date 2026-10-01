@@ -12,6 +12,8 @@ It gives you the audio, the credits, and the licence terms the finished clip mus
 
 Product thinking, legal reality check and roadmap: **[docs/PRODUCT_SPEC.md](docs/PRODUCT_SPEC.md)**.
 
+> **On Windows?** Follow **[docs/WINDOWS_SETUP.md](docs/WINDOWS_SETUP.md)**: it covers installing Python, Git and FFmpeg step by step. The commands below are for Mac/Linux.
+
 ## Quick start (no downloads needed)
 
 Needs Python 3.10+ and `ffmpeg` (for MP3 files).
