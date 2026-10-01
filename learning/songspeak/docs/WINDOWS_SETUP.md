@@ -5,13 +5,20 @@ Lines starting with `#` are notes. Don't type them.
 
 ## One-time setup (about 15 minutes)
 
-### 1. Check Python
+### 1. Install Python 3.12 (x64)
 
 ```powershell
-python --version
+winget install --id Python.Python.3.12 -e --architecture x64
 ```
-You need **3.10 or newer**. 3.12 is the safest choice. If the Microsoft Store opens or you get an error, install Python from
-https://www.python.org/downloads/ and **tick "Add python.exe to PATH"** on the first installer screen. Then close and reopen PowerShell.
+Close PowerShell, open a new window, then check:
+```powershell
+py -3.12 -c "import platform; print(platform.machine())"
+```
+It should print **AMD64**.
+
+Why x64, even on an ARM laptop (Snapdragon / Surface)? The speech-recognition engine used in "Build a real library"
+(CTranslate2, behind faster-whisper) has no Windows-on-ARM build. Windows runs x64 Python automatically through
+emulation, so it's a little slower but everything works. Python 3.12 is used because every package has a ready-made build for it.
 
 ### 2. Install Git (to download the code) and FFmpeg (to read/write MP3s)
 
@@ -43,7 +50,7 @@ cd learning\songspeak
 This keeps SongSpeak's packages separate from everything else on your PC.
 
 ```powershell
-python -m venv .venv
+py -3.12 -m venv .venv
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned     # one time only; answer Y
 .\.venv\Scripts\Activate.ps1
 ```
@@ -102,7 +109,8 @@ python -m songspeak serve --library library
 | `running scripts is disabled on this system` | Run the `Set-ExecutionPolicy` line in step 4 |
 | The prompt doesn't start with `(.venv)` | Run `.\.venv\Scripts\Activate.ps1` again from the `learning\songspeak` folder |
 | `does not appear to be a Python project` | You're in the wrong folder: `cd $HOME\Documents\ks-passion\learning\songspeak` |
-| `faster-whisper` fails to install | Use Python 3.12: install it, delete the `.venv` folder, and redo steps 4–5 |
+| `faster-whisper` / `ctranslate2` fails to install | The environment was made with ARM or 3.14 Python: delete the `.venv` folder and redo steps 4–5 with `py -3.12` |
+| `py -3.12` says no such Python | Redo step 1, then open a new PowerShell window |
 | `HTTP Error 403` / connection errors on fetch | Check your internet connection or VPN, then try again; ccMixter is sometimes slow |
 
 Stuck? Copy the whole PowerShell output into the chat, like you did before. That's exactly what's needed.
