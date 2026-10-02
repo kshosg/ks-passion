@@ -13,13 +13,20 @@ function Invoke-SongSpeak {
     if ($LASTEXITCODE -ne 0) { throw "songspeak $($args[0]) failed (exit code $LASTEXITCODE)" }
 }
 
+# A catalogue page that fails (site busy, odd data) is reported and skipped: whatever was
+# downloaded still gets transcribed below, and running the script again retries the page.
+function Invoke-Fetch {
+    python -m songspeak fetch @args
+    if ($LASTEXITCODE -ne 0) { Write-Warning "That fetch failed; carrying on with the next one." }
+}
+
 for ($page = 0; $page -lt $Pages; $page++) {
-    Invoke-SongSpeak fetch ccmixter --library $Library --limit 20 --offset ($page * 20)
+    Invoke-Fetch ccmixter --library $Library --limit 20 --offset ($page * 20)
 }
 
 if ($env:FREESOUND_API_KEY) {
     foreach ($query in @("sung word", "singing hello", "choir word", "vocal phrase")) {
-        Invoke-SongSpeak fetch freesound --library $Library --query $query --limit 30 --max-seconds 20
+        Invoke-Fetch freesound --library $Library --query $query --limit 30 --max-seconds 20
     }
 } else {
     Write-Host "FREESOUND_API_KEY not set: skipping Freesound (get a free key at https://freesound.org/apiv2/apply)"

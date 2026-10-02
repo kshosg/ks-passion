@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import http.client
 import json
+import re
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -24,10 +25,32 @@ def get_json(url: str, params: dict | None = None, timeout: float = 30) -> objec
     with urllib.request.urlopen(req, timeout=timeout) as resp:
         body = resp.read()
     try:
-        return json.loads(body)
+        return parse_json_leniently(body)
     except ValueError as exc:
         host = urllib.parse.urlsplit(url).netloc
-        raise RuntimeError(f"{host} sent back something that isn't JSON (starts: {body[:80]!r}); try again later") from exc
+        raise RuntimeError(f"{host} sent back something that isn't JSON even after repairs ({exc}); try again later") from exc
+
+
+_ESCAPE = re.compile(r"\\(.)", re.DOTALL)
+
+
+def _fix_escape(m: re.Match) -> str:
+    """Keep valid JSON escapes; turn an invalid one like \\' into an escaped backslash plus the character."""
+    return m.group(0) if m.group(1) in '"\\/bfnrtu' else "\\\\" + m.group(1)
+
+
+def parse_json_leniently(body: bytes) -> object:
+    """Parse JSON from catalogue APIs that don't always produce valid JSON.
+
+    ccMixter's API, for one, can return raw line breaks/tabs inside strings, backslashes that
+    aren't valid escapes (\\' from PHP), or text that isn't valid UTF-8, usually in user-written
+    descriptions. Repair those rather than give up on a whole page of results.
+    """
+    text = body.decode("utf-8", errors="replace")
+    try:
+        return json.loads(text, strict=False)  # strict=False accepts control characters in strings
+    except json.JSONDecodeError:
+        return json.loads(_ESCAPE.sub(_fix_escape, text), strict=False)
 
 
 # Some file servers (ccMixter's included) answer 403 to requests that don't look like a browser download.

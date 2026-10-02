@@ -184,3 +184,19 @@ def test_download_failure_names_the_link(tmp_path, monkeypatch):
     monkeypatch.setattr(http_mod.urllib.request, "urlopen", always_403)
     with pytest.raises(RuntimeError, match=r"HTTP 403 / HTTP 403 for http://x.org/a.mp3"):
         http_mod.download("http://x.org/a.mp3", tmp_path / "a.mp3")
+
+
+@pytest.mark.parametrize(
+    "body, expected",
+    [
+        (b'[{"upload_name": "In Out", "d": "line one\nline two\ttab"}]', "line one\nline two\ttab"),  # raw control chars
+        (b'[{"upload_name": "In Out", "d": "don\\\'t stop"}]', "don\\'t stop"),  # PHP-style \' escape
+        (b'[{"upload_name": "In Out", "d": "C:\\\\Users\\\\x \\u00e9"}]', "C:\\Users\\x \u00e9"),  # valid escapes kept
+        (b'[{"upload_name": "In Out", "d": "caf\xe9"}]', "caf\ufffd"),  # not UTF-8
+    ],
+)
+def test_lenient_json_repairs_common_catalogue_glitches(body, expected):
+    from songspeak.sources.http import parse_json_leniently
+
+    data = parse_json_leniently(body)
+    assert data[0]["upload_name"] == "In Out" and data[0]["d"] == expected
