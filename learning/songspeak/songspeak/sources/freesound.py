@@ -16,6 +16,18 @@ API = "https://freesound.org/apiv2/search/text/"
 FIELDS = "id,name,username,license,url,tags,duration,previews"
 LICENSE_FILTER = 'license:("Creative Commons 0" OR "Attribution")'  # NC is filtered out at the source
 
+# Freesound is mostly sound effects. Keep a sound only if it's tagged as a human voice and not as
+# something else that "sings" (birds) or makes tones (synths): the speech recogniser invents words
+# when fed non-speech, and those would pollute the library.
+HUMAN_VOICE_TAGS = {
+    "voice", "vocal", "vocals", "sung", "singer", "acapella", "acappella", "a-cappella", "choir",
+    "female-voice", "male-voice", "female-vocal", "male-vocal", "human-voice", "spoken", "speech", "word", "words",
+}  # fmt: skip
+NOT_VOICE_TAGS = {
+    "bird", "birds", "birdsong", "bird-song", "animal", "animals", "insect", "frog", "nature", "field-recording",
+    "synth", "synthesizer", "synthesiser", "modular", "lfo", "waveform", "oscillator", "glitch", "noise",
+}  # fmt: skip
+
 
 def search(
     query: str = "singing word",
@@ -32,7 +44,7 @@ def search(
         "query": query,
         "filter": f"{LICENSE_FILTER} duration:[0 TO {max_seconds}]",
         "fields": FIELDS,
-        "page_size": min(limit, 150),
+        "page_size": 150,  # ask for a full page: many results are dropped as not-a-voice below
         "page": page,
         "token": api_key,
     }
@@ -46,6 +58,8 @@ def parse_sound(item: dict) -> Candidate | None:
     if not url or not item.get("license"):
         return None
     tags = sorted({str(t).lower() for t in item.get("tags") or []})
+    if not is_human_voice(tags):
+        return None
     return Candidate(
         source="freesound",
         source_id=str(item["id"]),
@@ -55,6 +69,11 @@ def parse_sound(item: dict) -> Candidate | None:
         page_url=item.get("url") or f"https://freesound.org/s/{item['id']}/",
         download_url=url,
         tags=tags,
-        a_cappella=bool({"acapella", "acappella", "a-cappella", "voice", "vocal", "singing"} & set(tags)),
+        a_cappella=True,  # a vocal one-shot: the whole file is voice
         seconds=item.get("duration"),
     )
+
+
+def is_human_voice(tags: list[str]) -> bool:
+    tags = set(tags)
+    return bool(tags & HUMAN_VOICE_TAGS) and not tags & NOT_VOICE_TAGS

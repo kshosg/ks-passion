@@ -200,3 +200,35 @@ def test_lenient_json_repairs_common_catalogue_glitches(body, expected):
 
     data = parse_json_leniently(body)
     assert data[0]["upload_name"] == "In Out" and data[0]["d"] == expected
+
+
+def test_freesound_keeps_only_human_voices():
+    def sound(i, name, tags):
+        return {"id": i, "name": name, "username": "u", "license": "http://creativecommons.org/licenses/by/4.0/",
+                "tags": tags, "previews": {"preview-hq-mp3": f"https://cdn.freesound.org/{i}.mp3"}}
+
+    results = {"results": [
+        sound(1, "LFOs Manipulating Waveform Generators-074.wav", ["synth", "lfo", "modular"]),
+        sound(2, "Cetti's Warbler", ["bird", "singing", "nature"]),
+        sound(3, "female voice says hello", ["voice", "hello", "female-voice"]),
+        sound(4, "sung word: welcome", ["sung", "word"]),
+        sound(5, "door creak", ["door", "creak"]),
+    ]}
+    cands = freesound.search(api_key="k", fetch=lambda url, params: results)
+    assert [c.source_id for c in cands] == ["3", "4"]
+
+
+def test_songs_and_remove_commands(tmp_path, capsys):
+    from songspeak.cli import main
+    from songspeak.demo import build_demo_library
+
+    library = build_demo_library(tmp_path / "lib")
+    audio = library.root / library.songs["night-market"].audio
+    assert main(["songs", "--library", str(library.root)]) == 0
+    out = capsys.readouterr().out
+    assert "night-market" in out and "Night Market - Demo Band B" in out and "words" in out
+
+    assert main(["remove", "night-market", "--library", str(library.root)]) == 0
+    assert "night-market" not in Library.load(library.root).songs
+    assert not audio.exists()
+    assert main(["remove", "nope", "--library", str(library.root)]) == 1

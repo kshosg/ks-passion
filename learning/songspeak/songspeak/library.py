@@ -68,6 +68,13 @@ class Library:
             raise ValueError(f"Duplicate song id {song.id!r}")
         self.songs[song.id] = song
 
+    def remove(self, song_id: str) -> Song:
+        """Take a song out of the library and delete its audio, vocals and transcript files."""
+        song = self.songs.pop(song_id)
+        for rel in {song.audio, song.vocals, song.transcript} - {None}:
+            (self.root / rel).unlink(missing_ok=True)
+        return song
+
     def usable(self, policy: LicensePolicy) -> list[Song]:
         """Songs whose licence allows remixing under this policy."""
         return [s for s in self.songs.values() if policy.allows(s.lic)]

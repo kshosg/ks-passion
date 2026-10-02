@@ -82,6 +82,13 @@ def main(argv: list[str] | None = None) -> int:
     lib_arg(search)
     nc_arg(search)
 
+    songs = sub.add_parser("songs", help="list the songs in a library, with their ids")
+    lib_arg(songs)
+
+    remove = sub.add_parser("remove", help="delete songs from a library (use the ids from 'songs')")
+    remove.add_argument("ids", nargs="+", metavar="ID")
+    lib_arg(remove)
+
     serve = sub.add_parser("serve", help="run the web app")
     lib_arg(serve)
     nc_arg(serve)
@@ -95,7 +102,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     commands = {
         "make": _make, "fetch": _fetch, "add": _add, "ingest": _ingest, "stats": _stats,
-        "search": _search, "serve": _serve, "demo": _demo,
+        "search": _search, "songs": _songs, "remove": _remove, "serve": _serve, "demo": _demo,
     }  # fmt: skip
     try:
         return commands[args.command](args)
@@ -212,6 +219,27 @@ def _stats(args) -> int:
         print(f"\nCoverage of {args.coverage.name}: {found}/{len(unique)} distinct words ({100 * found / max(1, len(unique)):.0f}%)")
         if missing:
             print("Missing: " + ", ".join(missing[:100]) + (" ..." if len(missing) > 100 else ""))
+    return 0
+
+
+def _songs(args) -> int:
+    library = Library.load(args.library)
+    for song in library.songs.values():
+        words = len(library.load_transcript(song)) if song.transcript else None
+        status = f"{words} words" if words is not None else "not transcribed yet"
+        print(f"{song.id:<24} {song.credit}  [{song.lic.label}, {status}]")
+    print(f"\n{len(library.songs)} songs. Remove one with: python -m songspeak remove <id> --library {args.library}")
+    return 0
+
+
+def _remove(args) -> int:
+    library = Library.load(args.library)
+    unknown = [i for i in args.ids if i not in library.songs]
+    if unknown:
+        raise ValueError(f"no song with id {', '.join(unknown)} (see: python -m songspeak songs --library {args.library})")
+    for song_id in args.ids:
+        print(f"Removed {library.remove(song_id).credit}")
+    library.save()
     return 0
 
 

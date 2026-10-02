@@ -98,3 +98,25 @@ def test_ingest_skips_a_failing_song_and_carries_on(tmp_path, monkeypatch):
     assert len(calls) == 5
     assert any("failed, skipped: RuntimeError: could not decode" in line for line in log)
     assert Library.load(library.root).songs["night-market"].transcript is None
+
+
+def test_ingest_drops_words_whisper_made_up(tmp_path, monkeypatch):
+    import sys
+    import types
+
+    from songspeak import ingest
+
+    def w(text, prob):
+        return types.SimpleNamespace(word=text, start=1.0, end=1.3, probability=prob)
+
+    class FakeModel:
+        def transcribe(self, audio, language=None, word_timestamps=False):
+            sung = types.SimpleNamespace(words=[w(" hello", 0.9), w(" mumble", 0.05)], no_speech_prob=0.1, avg_logprob=-0.3)
+            noise = types.SimpleNamespace(words=[w(" thank", 0.6), w(" you", 0.6)], no_speech_prob=0.9, avg_logprob=-1.4)
+            return [sung, noise], None
+
+    monkeypatch.setitem(sys.modules, "faster_whisper", types.SimpleNamespace(WhisperModel=None))
+    monkeypatch.setitem(ingest._models, "small", FakeModel())
+    library = build_demo_library(tmp_path / "lib")
+    words = ingest.transcribe(library.audio_path(library.songs["late-train"]))
+    assert [x.word for x in words] == ["hello"]

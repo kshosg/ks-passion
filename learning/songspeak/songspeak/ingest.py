@@ -49,9 +49,23 @@ def transcribe(path: Path, model_size: str = "small", language: str | None = "en
     segments, _ = model.transcribe(samples, language=language, word_timestamps=True)
     words: list[Word] = []
     for seg in segments:
+        if _probably_not_speech(seg):
+            continue
         for w in seg.words or []:
-            words.extend(split_word(w.word, w.start, w.end, w.probability))
+            if w.probability >= MIN_WORD_PROB:
+                words.extend(split_word(w.word, w.start, w.end, w.probability))
     return words
+
+
+# Whisper "hears" words in instruments, birdsong and noise. Drop what it isn't sure about.
+MIN_WORD_PROB = 0.2
+NO_SPEECH_PROB = 0.6  # Whisper's own estimate that a segment has no speech in it
+LOW_AVG_LOGPROB = -1.0
+
+
+def _probably_not_speech(seg) -> bool:
+    """Whisper's standard hallucination test: likely silence/noise *and* a low-confidence transcript."""
+    return getattr(seg, "no_speech_prob", 0.0) > NO_SPEECH_PROB and getattr(seg, "avg_logprob", 0.0) < LOW_AVG_LOGPROB
 
 
 _models: dict = {}
